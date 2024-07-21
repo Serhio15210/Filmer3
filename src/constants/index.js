@@ -1,0 +1,7 @@
+export const MAIN_RED="#DC143C"
+export const MAIN_RED_FADE="rgba(220, 20, 60, 0.5)"
+export const MAIN_GREY_FADE="rgb(210, 210, 210)"
+export const MAIN_YELLOW_FADE="rgba(218, 165, 32, 0.5)"
+export const MAIN_SUCCESS="#6aa84f"
+export const MAIN_YELLOW="#DAA520"
+export const MAIN_GREY="#748c94"
