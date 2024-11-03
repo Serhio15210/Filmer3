@@ -10,7 +10,7 @@ import AwesomeButton from "react-native-really-awesome-button";
 import { themeColors } from "./themeColors";
 import { useGetFilmByIdQuery, userApi } from "../../services/UserService";
 
-import Loading from "../Loading";
+import Loading from "../UI/Loading";
 import { filmApi } from "../../services/FilmService";
 
 const AddFilmModal = ({open, setOpen, changeUser, selectFilm}) => {

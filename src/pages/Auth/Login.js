@@ -49,6 +49,7 @@ const Login = ({navigation}) => {
         setAuthToken(response?.token)
         // setIsAuth(true)
       } else {
+
         setMessage(response.toString())
       }
 

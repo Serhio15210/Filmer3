@@ -26,6 +26,17 @@ export const userApi = createApi({
       }),
       providesTags: result => ["user"],
     }),
+    updateProfile: builder.mutation({
+      query: (data, token) => ({
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        url: `/auth/update`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: result => ["user"],
+    }),
     getUserLists: builder.query({
       query: () => ({
         url: `/lists`,
@@ -111,6 +122,7 @@ export const userApi = createApi({
       }),
       providesTags: result => ["activities"],
     }),
+
   }),
 
 });
@@ -127,5 +139,6 @@ export const {
   useCreateListMutation,
   useUpdateListMutation,
   useDeleteListMutation,
-  useGetActivitiesQuery
+  useGetActivitiesQuery,
+  useUpdateProfileMutation
 } = userApi;

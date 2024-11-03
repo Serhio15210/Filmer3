@@ -7,6 +7,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import {useNavigation} from "@react-navigation/native";
 import { MAIN_YELLOW } from "../../constants";
 import { useSelector } from "react-redux";
+import Toast from "react-native-toast-message";
 
 const Review = ({item,key}) => {
   const navigation=useNavigation()
@@ -18,7 +19,12 @@ const Review = ({item,key}) => {
       <TouchableOpacity  onPress={()=>{
         if (item?.user._id===user._id) {
           navigation.navigate('Profile')
-        }else navigation.navigate('UserOverview', { title: item?.user?.userName, id: item?.user?._id })
+        }else {
+          Toast.show({
+            text1: "Coming Soon!"
+          });
+          // navigation.navigate('UserOverview', { title: item?.user?.userName, id: item?.user?._id })
+        }
       }}>
       <Text style={[styles.avatarBlock ]}>{item?.user?.userName[0]}</Text>
       </TouchableOpacity>

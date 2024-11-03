@@ -13,7 +13,7 @@ import { userApi } from "../../../services/UserService";
 import { movieApi } from "../../../services/MovieService";
 import { searchMovieApi } from "../../../services/SearchMovieService";
 import FindFilmCard from "../../../components/Films/FindFilmCard";
-import Loading from "../../../components/Loading";
+import Loading from "../../../components/UI/Loading";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 

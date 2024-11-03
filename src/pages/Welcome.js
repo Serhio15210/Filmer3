@@ -9,6 +9,7 @@ import {useAuth} from "../providers/AuthProvider";
 import {Root} from "../navigation/Root";
 import { Image, SafeAreaView, StyleSheet, View } from "react-native";
 import {themeColors} from "../navigation/themeColors";
+import Splash from "../components/Splash";
 
 const Stack = createStackNavigator();
 const Welcome = () => {
@@ -16,9 +17,7 @@ const Welcome = () => {
   const {isAuth, isNewUser, isLoaded} = useAuth();
   const style = styles(themeColors[appTheme]);
   return (
-    !isLoaded ? <SafeAreaView style={style.loadView}>
-        <Image source={require('../assets/1961-movie-loading.gif')} style={{flex: 1}} resizeMode={'contain'}/>
-      </SafeAreaView> :
+    !isLoaded ? <Splash isAppReady={!isLoaded}/> :
       <NavigationContainer  >
 
         {!isAuth ?

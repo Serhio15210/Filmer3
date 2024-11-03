@@ -56,8 +56,11 @@ const EditList = ({ route }) => {
     dispatch(setTempFilms(data?.list?.films));
   }, [data]);
   useEffect(() => {
-    if (isSuccess||isDeleted) {
+    if (isSuccess) {
       navigation.goBack();
+    }
+    if (isDeleted){
+      navigation.pop(2)
     }
   }, [isSuccess,isDeleted]);
 

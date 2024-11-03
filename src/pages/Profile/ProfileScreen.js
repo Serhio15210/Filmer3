@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
-import { FlatList, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { normalize } from "../../responsive/fontSize";
 import { useAuth } from "../../providers/AuthProvider";
-import { IMG_URI } from "../../api/apiKey";
+import { BASE_URL, IMG_URI } from "../../api/apiKey";
 import Loading from "../../components/UI/Loading";
 import { AirbnbRating } from "react-native-ratings";
 import RatingStats from "../../components/UI/RatingStats";
@@ -12,46 +12,112 @@ import { removeToken } from "../../utils/storage";
 import { styles } from "./styles/profileStyles";
 import { useTheme } from "../../providers/ThemeProvider";
 import { MAIN_YELLOW } from "../../constants";
-import { useGetActivitiesQuery, useGetProfileQuery, useGetUserListsQuery } from "../../services/UserService";
+import { useGetActivitiesQuery, useGetProfileQuery, useGetUserListsQuery, userApi } from "../../services/UserService";
 import { useGetFilmStatsQuery } from "../../services/FilmService";
+import Feather from "react-native-vector-icons/Feather";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "react-native-image-picker";
+import { WHITE } from "../../constants/colors";
 
 const ProfileScreen = () => {
 
-  const {   setIsAuth, setAuthToken } = useAuth();
+  const { setIsAuth, setAuthToken } = useAuth();
   const { i18n } = useTheme();
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  const { data: { userInfo:user }={}, isLoading:isUserLoading,refetch:userRefetch, error: userError }=useGetProfileQuery()
-  const { data:listData, isLoading:isListLoading,refetch:userListRefetch  }=useGetUserListsQuery()
-  const { data: { activities:activities }={}, isLoading:isActivitiesLoading,refetch:activitiesRefetch,error  }=useGetActivitiesQuery()
-  const { data: stats , isLoading:isStatsLoading,refetch:statsRefetch  }=useGetFilmStatsQuery()
+  const {
+    data: { userInfo: user } = {},
+    isLoading: isUserLoading,
+    refetch: userRefetch,
+    error: userError,
+  } = useGetProfileQuery();
+  const { data: listData, isLoading: isListLoading, refetch: userListRefetch } = useGetUserListsQuery();
+  const {
+    data: { activities: activities } = {},
+    isLoading: isActivitiesLoading,
+    refetch: activitiesRefetch,
 
+  } = useGetActivitiesQuery();
+  const { data: stats, isLoading: isStatsLoading, refetch: statsRefetch } = useGetFilmStatsQuery();
+  const [update, { isLoading: isUpdating, isSuccess, error }] = userApi.useUpdateProfileMutation();
   useEffect(() => {
-    if (isFocused){
-      activitiesRefetch()
-      statsRefetch()
+    if (isFocused) {
+      activitiesRefetch();
+      statsRefetch();
     }
   }, [isFocused]);
+  const [edit, setEdit] = useState(false);
+  const [photo, setPhoto] = useState({});
+  const [name, setName] = useState(user?.userName || "");
+  const editProfile = useCallback(async () => {
+    const formData = new FormData();
+    if (photo.uri) {
+      formData.append("avatar", {
+        uri: photo.uri,
+        name: photo.fileName,
+        type: photo.type,
+      });
+    }
+    formData.append("userName", name);
+    await update(formData);
+  }, [photo, name]);
+  useEffect(() => {
+    if (isSuccess) {
+      setEdit(false);
+      setPhoto({});
+    }
+  }, [isSuccess]);
+
   return (
     isUserLoading ? <Loading /> :
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.profileHeader}>
-            <View style={styles.avatar}>
-              <Text style={{ fontSize: normalize(24), color: "white" }}>{user?.userName[0]?.toUpperCase()}</Text>
-            </View>
-            <Text style={styles.userName}>{user?.userName}</Text>
+            <TouchableOpacity style={{ position: "absolute", top: normalize(20), right: normalize(15) }}
+                              onPress={async () => {
+                                if (edit) {
+                                  await editProfile();
+                                } else setEdit(!edit);
+                              }}>
+              {edit ? <Text style={styles.text}>Save</Text> : <Feather name={"edit"} color={"white"} size={18} />}
+            </TouchableOpacity>
+            {isUpdating ? <Loading color={WHITE} /> :
+              <>
+                <TouchableOpacity style={styles.avatar} disabled={!edit} onPress={async () => {
+                  await ImagePicker.launchImageLibrary({}, response => {
+                    if (response.didCancel) {
+                      console.log("User cancelled image picker");
+                    } else if (response.error) {
+                      console.log("ImagePicker Error: ", response.error);
+                    } else {
+                      setPhoto(response.assets[0]);
+                    }
+                  });
+                }}>
+                  {photo.uri ?
+                    <Image source={{ uri: photo.uri }} style={styles.avatar} /> : user?.avatar ?
+                      <Image source={{ uri: BASE_URL + "/static/avatars/" + user.avatar }} style={styles.avatar} /> :
 
+                      <Text
+                        style={{ fontSize: normalize(24), color: "white" }}>{user?.userName[0]?.toUpperCase()}</Text>
+                  }
+                </TouchableOpacity>
+                {edit ? <TextInput value={name} onChangeText={setName}
+                                   style={{ ...styles.userName, textDecorationLine: "underline", textAlign: "center" }}
+                                   placeholder={"Type your username"} /> :
+                  <Text style={styles.userName}>{user?.userName}</Text>}
+              </>}
           </View>
-          <TouchableOpacity activeOpacity={0.7} style={styles.block} onPress={()=>{
-            navigation.navigate("ProfileActivities",{title:user?.userName,activities})
+          <TouchableOpacity activeOpacity={0.7} style={styles.block} onPress={() => {
+            navigation.navigate("ProfileActivities", { title: user?.userName, activities });
           }}>
             <Text style={styles.title}>{i18n.t("recentActivity")}</Text>
-            <FlatList showsHorizontalScrollIndicator={false} horizontal scrollEnabled={activities?.length>3} data={activities}
-                      contentContainerStyle={{ marginTop: normalize(10),gap:5 }} renderItem={({ item, index }) => {
-              return (<View key={index}  >
+            <FlatList showsHorizontalScrollIndicator={false} horizontal scrollEnabled={activities?.length > 3}
+                      data={activities}
+                      contentContainerStyle={{ marginTop: normalize(10), gap: 5 }} renderItem={({ item, index }) => {
+              return (<View key={index}>
                 <Image source={{ uri: IMG_URI + item?.poster }} style={styles.activityImg} />
                 {item?.rate > 0 && <AirbnbRating
                   count={5}

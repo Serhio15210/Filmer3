@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity} from "react-native";
+import { Dimensions, Image, StyleSheet, TouchableOpacity } from "react-native";
 import {normalize} from "../../responsive/fontSize";
 import {IMG_URI, UNKNOWN_IMG} from "../../api/apiKey";
 import {AirbnbRating} from "react-native-ratings";
@@ -8,7 +8,7 @@ import {MAIN_GREY, MAIN_GREY_FADE, MAIN_RED} from "../../constants/colors";
 const UserFilm = ({item,onPress}) => {
   return (
     <TouchableOpacity
-      style={{width: normalize(120), marginRight: normalize(10), marginBottom: normalize(10)}} onPress={onPress}>
+      style={{width: Dimensions.get('window').width/3-15, marginRight: normalize(10), marginBottom: normalize(10)}} onPress={onPress}>
       <Image source={item?.poster ? {uri: IMG_URI + item?.poster} : UNKNOWN_IMG} style={styles.activityImg}/>
       {item?.rate > 0 && <AirbnbRating
         count={5}
@@ -26,7 +26,7 @@ const UserFilm = ({item,onPress}) => {
 const styles = StyleSheet.create({
 
   activityImg: {
-    width: normalize(120), height: normalize(140), borderRadius: 5
+    width: '100%', height: normalize(150), borderRadius: 5
   },
 
 

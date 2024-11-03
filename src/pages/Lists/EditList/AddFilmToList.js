@@ -18,7 +18,7 @@ import { listApi } from "../../../services/ListService";
 import { themeColors } from "../../../components/filmModals/themeColors";
 import AwesomeButton from "react-native-really-awesome-button";
 import { useTheme } from "../../../providers/ThemeProvider";
-import Loading from "../../../components/Loading";
+import Loading from "../../../components/UI/Loading";
 
 const AddFilmToList = ({ route }) => {
   const navigation = useNavigation();

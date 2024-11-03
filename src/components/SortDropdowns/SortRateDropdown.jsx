@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from "react-native";
 import Entypo from "react-native-vector-icons/Entypo";
-import {MAIN_GREY, MAIN_GREY_FADE, MAIN_RED} from "../../constants/colors";
+import { BLACK, MAIN_GREY, MAIN_GREY_FADE, MAIN_RED, MAIN_YELLOW, WHITE } from "../../constants/colors";
 import {Dropdown} from "react-native-element-dropdown";
 import {normalize} from "../../responsive/fontSize";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -12,38 +12,13 @@ const SortRateDropdown = ({value,setValue,filters}) => {
   const renderItem = item => {
     return (
       <View style={styles.item}>
-        {item.value===1?
-          <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>:
-          item.value===2?
-            <View style={styles.row}>
-              <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-              <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-            </View>:
-            item.value===3?
-              <View style={styles.row}>
-                <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-              </View>:
-              item.value===4?
-                <View style={styles.row}>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                </View>:item.value===5?
-                  <View style={styles.row}>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  </View>:<View style={styles.row}>
-                    <AntDesign name={'staro'} color={MAIN_GREY} style={styles.star}/>
-                    <Text style={{fontSize:normalize(16),color:MAIN_GREY}}>{i18n.t('all')}</Text>
-                  </View>
-
+        {item.value>0?renderStar(item.value):
+          <View style={styles.row}>
+            <AntDesign name={'staro'} color={MAIN_GREY_FADE} style={styles.star}/>
+            <Text style={{fontSize:normalize(16),color:MAIN_GREY_FADE}}>{i18n.t('all')}</Text>
+          </View>
         }
+
 
       </View>
     );
@@ -54,7 +29,7 @@ const SortRateDropdown = ({value,setValue,filters}) => {
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
-              containerStyle={{borderRadius:10}}
+              containerStyle={{borderRadius:10,backgroundColor:BLACK}}
 
               data={filters}
               search={false}
@@ -69,33 +44,7 @@ const SortRateDropdown = ({value,setValue,filters}) => {
               }}
       renderLeftIcon={(item) => {
         return (
-          value===1?
-              <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>:
-              value===2?
-                <View style={styles.row}>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                </View>:
-                value===3?
-                  <View style={styles.row}>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                  </View>:
-                  value===4?
-                    <View style={styles.row}>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    </View>: value===5?
-                    <View style={styles.row}>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                      <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
-                    </View>:<Text style={{fontSize:normalize(16),color:MAIN_GREY_FADE}}>Rate</Text>
+          value>0?renderStar(value) :<Text style={{fontSize:normalize(16),color:MAIN_GREY_FADE}}>Rate</Text>
 
         )
 
@@ -103,11 +52,12 @@ const SortRateDropdown = ({value,setValue,filters}) => {
               renderItem={renderItem}/>
   );
 };
-const renderStar=({count})=>{
+const renderStar=(count)=>{
+  const array=Array(count).fill(count)
   return (
     <View style={styles.row}>
-      {count.map(()=>{
-        return <AntDesign name={'star'} color={MAIN_RED} style={styles.star}/>
+      {array.map((_,index)=>{
+        return <AntDesign key={index} name={'star'} color={MAIN_YELLOW} style={styles.star}/>
       })}
     </View>
   )
@@ -122,9 +72,9 @@ const styles = StyleSheet.create({
   dropdown: {
     flex:1,
     height: normalize(45),
-    backgroundColor: 'white',
+    backgroundColor: BLACK,
     padding: normalize(15),
-    shadowColor: '#000',
+    shadowColor: MAIN_YELLOW,
     borderBottomWidth:1,
     borderColor:MAIN_GREY_FADE
   },
@@ -141,7 +91,7 @@ const styles = StyleSheet.create({
   textItem: {
     flex: 1,
     fontSize: 16,
-    color:'black'
+    color:WHITE
   },
   placeholderStyle: {
     fontSize: 16,
@@ -150,7 +100,7 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-    color:'black',
+    color:WHITE,
     display:'none'
   },
   iconStyle: {
@@ -160,7 +110,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 10,
     fontSize: 16,
-    color:'black'
+    color:WHITE
   },
 });
 

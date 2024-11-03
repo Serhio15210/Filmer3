@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Drawer, Text, Title } from "react-native-paper";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -18,6 +18,9 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import Entypo from "react-native-vector-icons/Entypo";
 import { useSelector } from "react-redux";
 import { themeColors } from "../../navigation/themeColors";
+import Toast from "react-native-toast-message";
+import { styles } from "../../pages/Profile/styles/profileStyles";
+import { BASE_URL } from "../../api/apiKey";
 
 export function DrawerContent(props) {
   const {
@@ -29,16 +32,16 @@ export function DrawerContent(props) {
     setLocale,
     changeLocale,
     setAppTheme,
-    appTheme
+    appTheme,
   } = useTheme();
-  const [openTop, setOpenTop] = useState(false)
-  const [openListsTop, setOpenListsTop] = useState(false)
-  const heightTop = openTop ? "auto" : 0
-  const heightListsTop = openListsTop ? "auto" : 0
+  const [openTop, setOpenTop] = useState(false);
+  const [openListsTop, setOpenListsTop] = useState(false);
+  const heightTop = openTop ? "auto" : 0;
+  const heightListsTop = openListsTop ? "auto" : 0;
   const {
-    user
+    user,
   } = useSelector((state) => state.auth);
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const styles = style(themeColors[appTheme]);
 
   // const favoriteList=userData.lists.shift()
@@ -48,29 +51,36 @@ export function DrawerContent(props) {
 
   useEffect(() => {
     // LogBox.ignoreLogs(["VirtualizedLists should never be nested"])
-    setOpenTop(false)
-  }, [])
+    setOpenTop(false);
+  }, []);
   return (
     <SafeAreaView
-      style={{flex: 1, backgroundColor: themeColors[appTheme].backgroundColor}}>
+      style={{ flex: 1, backgroundColor: themeColors[appTheme].backgroundColor }}>
       <DrawerContentScrollView {...props}  >
         <View style={styles.drawerContent}>
-          <ImageBackground source={appTheme==='light'?avatarBg:avatarBlackBg} style={styles.userInfoSection}>
-            <View style={{flexDirection: 'row', alignItems: 'flex-end'}}>
+          <ImageBackground source={appTheme === "light" ? avatarBg : avatarBlackBg} style={styles.userInfoSection}>
+            <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
               <View style={styles.avatarBlock}>
                 <View style={styles.avatar}>
-                  <Text style={{fontSize: 20, color: 'white'}}>{user?.userName[0]?.toUpperCase()}</Text>
+                  {user.avatar ?
+
+                    <Image source={{ uri: BASE_URL + "/static/avatars/" + user.avatar }} style={styles.avatar} /> :
+
+                    <Text
+                      style={{ fontSize: normalize(24), color: "white" }}>{user?.userName[0]?.toUpperCase()}</Text>
+                  }
+                  
                 </View>
               </View>
-              <Title style={[styles.title, {color: "white"}]}>{user?.userName}</Title>
+              <Title style={[styles.title, { color: "white" }]}>{user?.userName}</Title>
             </View>
 
-            <View style={{...styles.row, justifyContent: 'space-around'}}>
+            <View style={{ ...styles.row, justifyContent: "space-around" }}>
               <TouchableOpacity>
-                <Text style={styles.sub}>{i18n.t('subscriptions')}: {user?.subscriptions?.length}</Text>
+                <Text style={styles.sub}>{i18n.t("subscriptions")}: {user?.subscriptions?.length}</Text>
               </TouchableOpacity>
               <TouchableOpacity>
-                <Text style={styles.sub}>{i18n.t('subscribers')}: {user?.subscribers?.length}</Text>
+                <Text style={styles.sub}>{i18n.t("subscribers")}: {user?.subscribers?.length}</Text>
               </TouchableOpacity>
             </View>
           </ImageBackground>
@@ -78,7 +88,7 @@ export function DrawerContent(props) {
           <Drawer.Section
             style={[styles.bottomDrawerSection]}>
             <DrawerItem
-              icon={({color, size}) => (
+              icon={({ color, size }) => (
 
                 <Icon
                   name="home-outline"
@@ -86,23 +96,23 @@ export function DrawerContent(props) {
                   size={size}
                 />
               )}
-              label={i18n.t('main')}
-              labelStyle={{color:themeColors[appTheme].drawerTitleColor}}
+              label={i18n.t("main")}
+              labelStyle={{ color: themeColors[appTheme].drawerTitleColor }}
               onPress={() => {
-                props.navigation.navigate('Home')
+                props.navigation.navigate("Home");
               }}
             />
             <DrawerItem
-              icon={({color, size}) => (
+              icon={({ color, size }) => (
                 <Icon
                   name="account-outline"
                   color={themeColors[appTheme].drawerTitleColor}
                   size={size}
                 />
               )}
-              label={i18n.t('profile')}
-              labelStyle={{color:themeColors[appTheme].drawerTitleColor}}
-              onPress={() => navigation.navigate('Profile')}
+              label={i18n.t("profile")}
+              labelStyle={{ color: themeColors[appTheme].drawerTitleColor }}
+              onPress={() => navigation.navigate("Profile")}
             />
             {/*<DrawerItem*/}
             {/*  icon={({color, size}) => (*/}
@@ -120,19 +130,22 @@ export function DrawerContent(props) {
 
           </Drawer.Section>
           <Drawer.Section
-            style={[styles.bottomDrawerSection ]}>
+            style={[styles.bottomDrawerSection]}>
             <DrawerItem
-              icon={({color, size}) => (
+              icon={({ color, size }) => (
                 <Fontisto
                   name="film"
                   color={themeColors[appTheme].drawerTitleColor}
                   size={size}
                 />
               )}
-              labelStyle={{color:themeColors[appTheme].drawerTitleColor}}
-              label={i18n.t('bestFilms')}
+              labelStyle={{ color: themeColors[appTheme].drawerTitleColor }}
+              label={i18n.t("bestFilms")}
               onPress={() => {
-                navigation.navigate('BestFilms')
+                Toast.show({
+                  text1: "Coming Soon!",
+                });
+                // navigation.navigate('BestFilms')
                 // navigation.reset({
                 //   index: 0,
                 //   routes: [{name: "HomeScreen"}, {name: "BestFilms"}]
@@ -141,17 +154,24 @@ export function DrawerContent(props) {
             />
 
             <DrawerItem
-              icon={({color, size}) => (
+              icon={({ color, size }) => (
                 <Entypo
                   name="list"
                   color={themeColors[appTheme].drawerTitleColor}
                   size={size}
                 />
               )}
-              label={i18n.t('myLists')}
-              labelStyle={{color:themeColors[appTheme].drawerTitleColor}}
+              label={i18n.t("myLists")}
+              labelStyle={{ color: themeColors[appTheme].drawerTitleColor }}
               onPress={() => {
-                navigation.navigate("AllListsScreen", {title: user?.userName})
+                // navigation.navigate('BestFilms')
+                // navigation.reset({
+                //   index: 0,
+                //   routes: [{name: "HomeScreen"}, {name: "AllListsScreen",params:{
+                //       title: user?.userName
+                //     }}]
+                // })
+                navigation.navigate("AllListsScreen", { title: user?.userName });
               }}
             />
 
@@ -197,19 +217,20 @@ export function DrawerContent(props) {
       </DrawerContentScrollView>
       <View style={styles.localeBlock}>
         <TouchableOpacity style={{
-          borderColor: locale === 'eng' ? themeColors[appTheme].localeTitleColor : 'transparent',
-          ...styles.localeButton
-        }} onPress={() => changeLocale('eng')}>
+          borderColor: locale === "eng" ? themeColors[appTheme].localeTitleColor : "transparent",
+          ...styles.localeButton,
+        }} onPress={() => changeLocale("eng")}>
           <Text style={{
-            color: locale === 'eng' ? themeColors[appTheme].localeTitleColor : MAIN_GREY_FADE,
-            ...styles.localeText
+            color: locale === "eng" ? themeColors[appTheme].localeTitleColor : MAIN_GREY_FADE,
+            ...styles.localeText,
           }}>ENG</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{
-          borderColor: locale === 'ukr' ? themeColors[appTheme].localeTitleColor : 'transparent',
-          ...styles.localeButton
-        }} onPress={() => changeLocale('ukr')}>
-          <Text style={{color: locale === 'ukr' ? themeColors[appTheme].localeTitleColor : MAIN_GREY_FADE, ...styles.localeText}}>УКР</Text>
+          borderColor: locale === "ukr" ? themeColors[appTheme].localeTitleColor : "transparent",
+          ...styles.localeButton,
+        }} onPress={() => changeLocale("ukr")}>
+          <Text
+            style={{ color: locale === "ukr" ? themeColors[appTheme].localeTitleColor : MAIN_GREY_FADE, ...styles.localeText }}>УКР</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -219,12 +240,12 @@ export function DrawerContent(props) {
 const style = (theme) => StyleSheet.create({
   drawerContent: {
     flex: 1,
-    marginTop: -4
+    marginTop: -4,
 
   },
   userInfoSection: {
     backgroundColor: MAIN_RED,
-    paddingBottom: normalize(10)
+    paddingBottom: normalize(10),
   },
   avatarBlock: {
     backgroundColor: theme.drawerAvatarBlock,
@@ -232,23 +253,23 @@ const style = (theme) => StyleSheet.create({
     borderTopLeftRadius: 0,
     width: normalize(80),
     height: normalize(80),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: normalize(10),
-    marginRight: normalize(10)
+    marginRight: normalize(10),
   },
   avatar: {
     borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: generateRandomColor(),
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
   title: {
     fontSize: normalize(24),
     marginTop: 3,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   caption: {
     fontSize: 14,
@@ -256,16 +277,16 @@ const style = (theme) => StyleSheet.create({
   },
   row: {
     marginTop: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   section: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginRight: 15,
   },
   sub: {
-    color: 'white'
+    color: "white",
   },
 
   drawerSection: {
@@ -282,34 +303,34 @@ const style = (theme) => StyleSheet.create({
     marginLeft: normalize(15),
     marginRight: normalize(15),
     borderRadius: 10,
-    padding: 2
+    padding: 2,
   },
   themeButton: {
     padding: normalize(5),
     paddingLeft: normalize(10),
     paddingRight: normalize(10),
-    width: '50%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10
+    width: "50%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
   },
   themeText: {
-    marginLeft: normalize(10)
+    marginLeft: normalize(10),
   },
   localeBlock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
+    flexDirection: "row",
+    alignItems: "center",
+    position: "absolute",
     bottom: normalize(30),
-    left: normalize(15)
+    left: normalize(15),
   },
   localeText: {
     fontSize: normalize(18),
-    fontWeight: '600'
+    fontWeight: "600",
   },
   localeButton: {
     borderBottomWidth: 1,
-    marginRight: normalize(15)
-  }
+    marginRight: normalize(15),
+  },
 });

@@ -19,6 +19,9 @@ import FindFilmToList from "../pages/Lists/EditList/FindFilmToList";
 import AddFilmToList from "../pages/Lists/EditList/AddFilmToList";
 import ProfileStack from "./ProfileStack";
 import FilmReviews from "../pages/Overview/FilmReviews";
+import AllListsScreen from "../pages/Profile/AllListsScreen";
+import { BLACK } from "../constants/colors";
+import NotificationsScreen from "../pages/Notifications/NotificationsScreen";
 
 
 const Stack = createSharedElementStackNavigator();
@@ -32,7 +35,9 @@ export const Root = ({ navigation }) => {
     <Stack.Navigator initialRouteName={"HomeRoot"} screenOptions={{
       headerTintColor: themeColors[appTheme].titleColor,
       presentation: "modal",
-
+      headerStyle: {
+        backgroundColor:BLACK
+      }
     }}>
 
 
@@ -111,6 +116,9 @@ export const Root = ({ navigation }) => {
 
                     })} />
       <Stack.Screen name="Profile" component={ProfileStack} options={({route}) => ({headerShown: false})}/>
+      <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={({route}) => ({title:"Notifications"})}/>
+      <Stack.Screen name="AllListsScreen" component={AllListsScreen} options={({route}) => ({title: route.params.title, headerShown: true})}/>
+
     </Stack.Navigator>
   );
 };

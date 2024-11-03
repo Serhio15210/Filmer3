@@ -7,6 +7,7 @@ import { filmApi } from "../services/FilmService";
 import listReducer from "./listReducer";
 import { searchMovieApi } from "../services/SearchMovieService";
 import { listApi } from "../services/ListService";
+import { notificationApi } from "../services/NotificationService";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     [filmApi.reducerPath]: filmApi.reducer,
     [listApi.reducerPath]: listApi.reducer,
     [searchMovieApi.reducerPath]: searchMovieApi.reducer,
+    [notificationApi.reducerPath]: notificationApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
@@ -28,7 +30,8 @@ export const store = configureStore({
       .concat(userApi.middleware)
       .concat(filmApi.middleware)
       .concat(searchMovieApi.middleware)
-      .concat(listApi.middleware),
+      .concat(listApi.middleware)
+      .concat(notificationApi.middleware)
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

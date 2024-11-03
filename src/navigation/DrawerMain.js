@@ -8,22 +8,25 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { normalize } from "../responsive/fontSize";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { themeColors } from "./themeColors";
+import { useGetUserListsQuery } from "../services/UserService";
+import { useGetNotificationsQuery } from "../services/NotificationService";
+import { useNavigation } from "@react-navigation/native";
 
 const Draw = createDrawerNavigator();
-const NotificationButton = ({openNotification, setOpenNotification}) => {
+const NotificationButton = (props) => {
   const {isDarkTheme,appTheme} = useTheme();
   const style=styles(themeColors[appTheme])
-  const {
-    user, notifications
-  } = useSelector((state) => state.auth);
+  const navigation=useNavigation()
+  const { data, isLoading,refetch }=useGetNotificationsQuery()
   const [unreadCount, setUnreadCount] = useState(0)
   useEffect(()=>{
-    setUnreadCount(notifications?.filter(item => !item?.isRead)?.length)
-  },[notifications])
+
+    data?.notifications.length&&setUnreadCount(data.notifications?.filter(item => !item?.isRead)?.length)
+  },[data])
   return (
     <View style={style.notificationContainer}>
 
-      <TouchableOpacity style={style.notificationButton} onPress={() => setOpenNotification(!openNotification)}>
+      <TouchableOpacity style={style.notificationButton} onPress={() => navigation.navigate("NotificationsScreen") }>
         {unreadCount > 0 &&
           <View style={style.count}><Text
             style={{color: 'white', fontSize: normalize(10)}}>{unreadCount}</Text></View>}
@@ -33,14 +36,8 @@ const NotificationButton = ({openNotification, setOpenNotification}) => {
   );
 }
 export const Drawer = (props) => {
-  const {isDarkTheme,appTheme} = useTheme();
+  const { appTheme} = useTheme();
 
-  const dispatch = useDispatch();
-
-  const [openNotification, setOpenNotification] = useState(false)
-  useEffect(() => {
-    setOpenNotification(false)
-  }, [props.navigation])
   // console.log(props.navigation.getState().routes[0].state.routes[0].state.routes[0])
   return (
     <Draw.Navigator drawerContent={props => <DrawerContent {...props} />} defaultStatus="closed"
@@ -55,8 +52,7 @@ export const Drawer = (props) => {
                       },
 
                       headerShown: true,
-                      headerRight: () => <NotificationButton openNotification={openNotification}
-                                                             setOpenNotification={setOpenNotification}/>
+                      headerRight: (props) => <NotificationButton {...props}/>
 
                     })}
     >
