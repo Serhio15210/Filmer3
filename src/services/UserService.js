@@ -1,132 +1,129 @@
-import { BASE_URL } from "../api/apiKey";
-import { loadToken } from "../utils/storage";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {BASE_URL} from '../api/apiKey';
+import {loadToken} from '../utils/storage';
+import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 
 export const userApi = createApi({
-  reducerPath: "userApi",
-  tagTypes: ["user", "userLists", "userFavorites","listById","activities"],
+  reducerPath: 'userApi',
+  tagTypes: ['user', 'userLists', 'userFavorites', 'listById', 'activities'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${BASE_URL}`,
 
     prepareHeaders: async (headers, query) => {
       const authResult = await loadToken();
       if (authResult) {
-        headers.set("Authorization", authResult);
+        headers.set('Authorization', authResult);
       }
       return headers;
     },
   }),
-  endpoints: (builder) => ({
+  endpoints: builder => ({
     getProfile: builder.query({
       query: () => ({
-        url: `/auth/getProfile`,
+        url: '/auth/getProfile',
         // headers: ({
         //   Authorization: `${token}`,
         // }),
       }),
-      providesTags: result => ["user"],
+      providesTags: result => ['user'],
     }),
     updateProfile: builder.mutation({
       query: (data, token) => ({
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-        url: `/auth/update`,
-        method: "PATCH",
+        url: '/auth/update',
+        method: 'PATCH',
         body: data,
       }),
-      invalidatesTags: result => ["user"],
+      invalidatesTags: result => ['user'],
     }),
     getUserLists: builder.query({
       query: () => ({
-        url: `/lists`,
+        url: '/lists',
       }),
-      providesTags: result => ["userLists"],
+      providesTags: result => ['userLists'],
     }),
     getUserFavoriteLists: builder.query({
       query: () => ({
-        url: `/auth/getFavorites`,
+        url: '/auth/getFavorites',
       }),
-      providesTags: result => ["userFavorites"],
+      providesTags: result => ['userFavorites'],
     }),
     likeFilm: builder.mutation({
       query: (film, token) => ({
-        url: `/auth/likeFilm`,
-        method: "POST",
+        url: '/auth/likeFilm',
+        method: 'POST',
         body: film,
       }),
-      invalidatesTags: result => ["user", "userFavorites"],
+      invalidatesTags: result => ['user', 'userFavorites'],
     }),
     dislikeFilm: builder.mutation({
-      query: (id) => ({
-        url: `/auth/deleteFilm`,
-        method: "POST",
+      query: id => ({
+        url: '/auth/deleteFilm',
+        method: 'POST',
         body: {
           imdb_id: id,
         },
       }),
-      invalidatesTags: result => ["user", "userFavorites"],
+      invalidatesTags: result => ['user', 'userFavorites'],
     }),
     getListById: builder.query({
-      query: (id) => ({
+      query: id => ({
         url: `/lists/${id}`,
       }),
-      providesTags: result => ["listById"],
+      providesTags: result => ['listById'],
     }),
     addToList: builder.mutation({
-      query: ({ listId, film }) => ({
-        url: `/lists/addFilm`,
-        method: "POST",
+      query: ({listId, film}) => ({
+        url: '/lists/addFilm',
+        method: 'POST',
         body: {
           listId: listId,
           film: film,
         },
       }),
-      invalidatesTags: result => ["userLists", "listById"],
+      invalidatesTags: result => ['userLists', 'listById'],
     }),
     createList: builder.mutation({
-      query: ({ name, description,mode }) => ({
-        url: `/lists/create`,
-        method: "POST",
+      query: ({name, description, mode}) => ({
+        url: '/lists/create',
+        method: 'POST',
         body: {
           name,
           description,
-          mode
+          mode,
         },
       }),
-      invalidatesTags: result => ["userLists"],
+      invalidatesTags: result => ['userLists'],
     }),
     deleteList: builder.mutation({
-      query: (id) => ({
+      query: id => ({
         url: `/lists/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
-      invalidatesTags: result => ["userLists"],
+      invalidatesTags: result => ['userLists'],
     }),
     updateList: builder.mutation({
-      query: ({ id, name,description,films,mode }) => ({
+      query: ({id, name, description, films, mode}) => ({
         url: `/lists/${id}`,
-        method: "PATCH",
+        method: 'PATCH',
         body: {
           name,
           description,
           films,
-          mode
+          mode,
         },
       }),
-      invalidatesTags: result => ["userLists","listById"],
+      invalidatesTags: result => ['userLists', 'listById'],
     }),
     getActivities: builder.query({
       query: () => ({
-        url: `/auth/getActivities`,
+        url: '/auth/getActivities',
       }),
-      providesTags: result => ["activities"],
+      providesTags: result => ['activities'],
     }),
-
   }),
-
 });
-
 
 export const {
   useGetProfileQuery,
@@ -140,5 +137,5 @@ export const {
   useUpdateListMutation,
   useDeleteListMutation,
   useGetActivitiesQuery,
-  useUpdateProfileMutation
+  useUpdateProfileMutation,
 } = userApi;

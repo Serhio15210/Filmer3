@@ -1,14 +1,12 @@
-import React from "react";
+import React from 'react';
 
-import { StatusBar, StyleSheet, useColorScheme } from "react-native";
+import {StatusBar, StyleSheet, useColorScheme} from 'react-native';
 
-
-import { AuthProvider } from "./src/providers/AuthProvider";
-import { ThemeProvider } from "./src/providers/ThemeProvider";
-import Welcome from "./src/pages/Welcome";
-import { store } from "./src/redux/store";
-import { Provider } from "react-redux";
-
+import {AuthProvider} from './src/providers/AuthProvider';
+import {ThemeProvider} from './src/providers/ThemeProvider';
+import Welcome from './src/pages/Welcome';
+import {store} from './src/redux/store';
+import {Provider} from 'react-redux';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -18,8 +16,7 @@ function App() {
       {/*<StatusBar hidden={true}  />*/}
       <AuthProvider>
         <ThemeProvider>
-
-          <Welcome/>
+          <Welcome />
         </ThemeProvider>
       </AuthProvider>
     </Provider>
